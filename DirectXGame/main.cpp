@@ -22,8 +22,7 @@ KGAMECLEAR,
 };
 
 Scene scene = Scene::kUnkown;
-uint32_t soundDataHandle;
-uint32_t voiceHandle;
+
 
 void ChangeScene() {
 	switch (scene) {
@@ -139,9 +138,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	/*gameScene = new GameScene;
 	gameScene->Initialize();*/
 
-	soundDataHandle = Audio::GetInstance()->LoadWave("darkmatter.wav");
-
-	voiceHandle = Audio::GetInstance()->PlayWave(soundDataHandle, true);
+	
 
 	// メインループ
 	while (true) {

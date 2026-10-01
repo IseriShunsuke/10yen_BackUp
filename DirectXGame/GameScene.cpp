@@ -16,27 +16,27 @@ void GameScene::Initialize()
 	//ステージ
 	stageModel_ = Model::CreateFromOBJ("stage_kari");
 	stageTransform.Initialize();
-	stageTransform.translation_ = { -9.0f,5.0f,0.0f };
+	stageTransform.translation_ = { -12.0f,5.0f,9.0f };
 	stageTransform.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform2.Initialize();
-	stageTransform2.translation_ = { 6.0f,-7.0f,0.0f };
+	stageTransform2.translation_ = { 6.0f,-7.0f,9.0f };
 	stageTransform2.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform2.rotation_ = { 0.0f,0.0f,0.5f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform3.Initialize();
-	stageTransform3.translation_ = { -12.0f,-20.0f,0.0f };
+	stageTransform3.translation_ = { -12.0f,-20.0f,9.0f };
 	stageTransform3.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform3.rotation_ = { 0.0f,0.0f,0.1f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform4.Initialize();
-	stageTransform4.translation_ = { 6.0f,-30.0f,0.0f };
+	stageTransform4.translation_ = { 6.0f,-30.0f,9.0f };
 	stageTransform4.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform4.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform5.Initialize();
-	stageTransform5.translation_ = { -18.0f,-44.0f,0.0f };
+	stageTransform5.translation_ = { -18.0f,-44.0f,9.0f };
 	stageTransform5.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform5.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
 
@@ -65,7 +65,7 @@ void GameScene::Initialize()
 	//カメラ
 	camera.Initialize();
 	camera.rotation_ = { 0.0f,0.0f,0.0f };
-	camera.translation_ = { 0.0f, 5.0f,-50.0f };
+	camera.translation_ = { -5.0f,0.0f,-25.0f };
 
 	camera.UpdateMatrix();
 	camera.TransferMatrix();
@@ -147,20 +147,16 @@ void GameScene::Update()
 		hitPosition_.y = yenTransform.translation_.y;
 		yenTransform.translation_.y -= gravity;//重力
 	}
-
-	if (yenTransform.translation_.y <= 0.0f)
-	{
 		camera.translation_.y = yenTransform.translation_.y;
-	}
 
 	if (yenTransform.translation_.y < -49.0f)
 	{
 		isOver = true;
 	}
 
-	if (camera.translation_.y <= -30.0f)
+	if (camera.translation_.y <= -50.0f)
 	{
-		camera.translation_.y = -30.0f;
+		camera.translation_.y = -50.0f;
 	}
 
 	stageTransform.UpdateMatrix();
