@@ -7,45 +7,52 @@ GameScene::~GameScene()
 {
 	delete stageModel_;
 	delete yenModel_;
+	delete goalModel_;
+	delete haikeiModel_;
 
 	goalModel_;
 }
 
 void GameScene::Initialize()
 {
+	
+	//カメラ
+	camera_.Initialize();
+	camera_.rotation_ = { 0.0f,0.0f,0.0f };
+	camera_.translation_ = { -5.0f,0.0f,-25.0f };
+
 	//ステージ
 	stageModel_ = Model::CreateFromOBJ("stage_kari");
 	stageTransform.Initialize();
-	stageTransform.translation_ = { -9.0f,5.0f,0.0f };
+	stageTransform.translation_ = { -12.0f,5.0f,9.0f };
 	stageTransform.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform2.Initialize();
-	stageTransform2.translation_ = { 6.0f,-7.0f,0.0f };
+	stageTransform2.translation_ = { 6.0f,-7.0f,9.0f };
 	stageTransform2.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform2.rotation_ = { 0.0f,0.0f,0.5f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform3.Initialize();
-	stageTransform3.translation_ = { -12.0f,-20.0f,0.0f };
+	stageTransform3.translation_ = { -12.0f,-20.0f,9.0f };
 	stageTransform3.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform3.rotation_ = { 0.0f,0.0f,0.1f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform4.Initialize();
-	stageTransform4.translation_ = { 6.0f,-30.0f,0.0f };
+	stageTransform4.translation_ = { 6.0f,-30.0f,9.0f };
 	stageTransform4.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform4.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
 
 	stageTransform5.Initialize();
-	stageTransform5.translation_ = { -18.0f,-44.0f,0.0f };
+	stageTransform5.translation_ = { -18.0f,-44.0f,9.0f };
 	stageTransform5.scale_ = { 1.0f,1.0f,1.0f };
 	stageTransform5.rotation_ = { 0.0f,0.0f,0.2f };//0.0 右斜め上　//2.0~左斜め上
 
 	//10円
 	yenModel_ = Model::CreateFromOBJ("coin");
-	yenTransform.Initialize();
-	yenTransform.translation_ = { -3.0f,16.0f,0.0f };
-	yenTransform.scale_ = { 1.0f,1.0f,1.0f };
-	yenTransform.rotation_ = { 0.0f,0.0f,0.0f };
+	coin_.Initialize(yenModel_,&camera_, { -3.0f,16.0f,0.0f });
+	yenPosition_ = { -3.0f,16.0f,0.0f };
+	yenRotation_ = { 0.0f,0.0f,0.0f };
 
 	//ゴール
 	goalModel_ = Model::CreateFromOBJ("cube");
@@ -62,24 +69,21 @@ void GameScene::Initialize()
 	haikeiTransform.rotation_ = { 0.0f,3.14f,0.0f };
 
 
-	//カメラ
-	camera.Initialize();
-	camera.rotation_ = { 0.0f,0.0f,0.0f };
-	camera.translation_ = { 0.0f, 5.0f,-50.0f };
+	
 
-	camera.UpdateMatrix();
-	camera.TransferMatrix();
+	camera_.UpdateMatrix();
+	camera_.TransferMatrix();
 
 	isHit = true;
 
 	hitPosition_ = { 0.0f,0.0f,0.0f };
-	gravity = 0.1f;
+	gravity_ = 0.1f;
 
-	shot = false;
-	hitWall = false;
+	shot_ = false;
+	hitWall_ = false;
 
-	isClear = false;
-	isOver = false;
+	isClear_ = false;
+	isOver_ = false;
 }
 
 void GameScene::Update()
@@ -88,79 +92,79 @@ void GameScene::Update()
 
 	MoveCoin();
 
+	coin_.Update();
+	coin_.SetPosition(yenPosition_);
+	coin_.SetRotation(yenRotation_);
 
-	if (yenTransform.translation_.x <= -20.0f)
+
+	if (yenPosition_.x <= -20.0f)
 	{
-		hitWall = true;
-		yenTransform.translation_.x = -20.0f;
+		hitWall_ = true;
+		yenPosition_.x = -20.0f;
 	}
 
-	else if (yenTransform.translation_.x > 10.0f)
+	else if (yenPosition_.x > 10.0f)
 	{
-		hitWall = true;
-		yenTransform.translation_.x = 10.0f;
+		hitWall_ = true;
+		yenPosition_.x = 10.0f;
 	}
 	else
 	{
-		hitWall = false;
+		hitWall_ = false;
 	}
 
-	if (hitWall)
+	if (hitWall_)
 	{
 		
-		shot = false;
+		shot_ = false;
 		if (isHit)
 		{
-			gravity = 0.0f;
+			gravity_ = 0.0f;
 			
 		}
 		if (isHit2)
 		{
-			hitPower = 0.0f;
+			hitPower_ = 0.0f;
 		}
 		if (isHit3)
 		{
-			gravity = 0.0f;
+			gravity_ = 0.0f;
 
 		}
 		if (isHit4)
 		{
-			hitPower = 0.0f;
+			hitPower_ = 0.0f;
 		}
 		if (isHit5)
 		{
-			gravity = 0.0f;
-			hitPower = 0.0f;
+			gravity_ = 0.0f;
+			hitPower_ = 0.0f;
 
 		}
 
 
 	}
 
-	if (hitPower == 0)
+	if (hitPower_ == 0)
 	{
-		shot = false;
+		shot_ = false;
 	}
 
 	if (!isHit2 && !isHit && !isHit3 && !isHit4 && !isHit5)
 	{
-		hitPosition_.y = yenTransform.translation_.y;
-		yenTransform.translation_.y -= gravity;//重力
+		hitPosition_.y = yenPosition_.y;
+		yenPosition_.y -= gravity_;//重力
+	}
+		camera_.translation_.y = yenPosition_.y;
+
+	if (yenPosition_.y < -49.0f)
+	{
+		isOver_ = true;
 	}
 
-	if (yenTransform.translation_.y <= 0.0f)
+	if (camera_.translation_.y <= -50.0f)
 	{
-		camera.translation_.y = yenTransform.translation_.y;
-	}
-
-	if (yenTransform.translation_.y < -49.0f)
-	{
-		isOver = true;
-	}
-
-	if (camera.translation_.y <= -30.0f)
-	{
-		camera.translation_.y = -30.0f;
+		camera_.translation_.y = -50.0f;
 	}
 
 	stageTransform.UpdateMatrix();
@@ -168,11 +172,10 @@ void GameScene::Update()
 	stageTransform3.UpdateMatrix();
 	stageTransform4.UpdateMatrix();
 	stageTransform5.UpdateMatrix();
-	yenTransform.UpdateMatrix();
 	goalTransform.UpdateMatrix();
 	haikeiTransform.UpdateMatrix();
 
-	camera.UpdateMatrix();
+	camera_.UpdateMatrix();
 
 }
 
@@ -180,76 +183,76 @@ void GameScene::MoveCoin()
 {
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 
-		hitPower -= 0.01f;
-		if (hitPower <= -1.0f)
+		hitPower_ -= 0.01f;
+		if (hitPower_ <= -1.0f)
 		{
-			hitPower = -1.0f;
+			hitPower_ = -1.0f;
 		}
 
 	}
 	else if (Input::GetInstance()->PushKey(DIK_D)) {
 
 		
-		hitPower += 0.01f;
-		if (hitPower >= 1.0f)
+		hitPower_ += 0.01f;
+		if (hitPower_ >= 1.0f)
 		{
-			hitPower = 1.0f;
+			hitPower_ = 1.0f;
 		}
 
 	}
 	else
 	{
-		shotPower = hitPower;
-		if (shotPower != 0.0f)
+		shotPower_ = hitPower_;
+		if (shotPower_ != 0.0f)
 		{
-			shot = true;
+			shot_ = true;
 
 		}
 		else
 		{
-			hitPower = 0.0f;
+			hitPower_ = 0.0f;
 		}
 
 	}
 
-	if (shot)
+	if (shot_)
 	{
 
-		yenTransform.translation_.x += shotPower * 1.0f;
-		if (shotPower > 0.0f)
+		yenPosition_.x += shotPower_ * 1.0f;
+		if (shotPower_ > 0.0f)
 		{
-			shotPower -= 0.1f;
-			if (shotPower <= 0)
+			shotPower_ -= 0.1f;
+			if (shotPower_ <= 0)
 			{
-				hitPower = 0.0f;
-				shot = false;
+				hitPower_ = 0.0f;
+				shot_ = false;
 			}
 		}
-		if (shotPower < 0.0f)
+		if (shotPower_ < 0.0f)
 		{
-			shotPower += 0.1f;
-			if (shotPower >= 0)
+			shotPower_ += 0.1f;
+			if (shotPower_ >= 0)
 			{
-				hitPower = 0.0f;
-				shot = false;
+				hitPower_ = 0.0f;
+				shot_ = false;
 			}
 		}
 
-		if (shotPower == 0)
+		if (shotPower_ == 0)
 		{
-			hitPower = 0.0f;
-			shot = false;
+			hitPower_ = 0.0f;
+			shot_ = false;
 		}
 
 
 		if (isHit || isHit2 || isHit3 || isHit4 || isHit5)
 		{
-			yenTransform.translation_.y += 1.0f;
+			yenPosition_.y += 1.0f;
 		}
 
 		
 
-		gravity = 0.1f;
+		gravity_ = 0.1f;
 	}
 
 
@@ -258,13 +261,18 @@ void GameScene::MoveCoin()
 
 void GameScene::AllCollision()
 {
-	isHit = IsCollisionStage(yenTransform, stageTransform);
-	isHit2 = IsCollisionStage(yenTransform, stageTransform2);
-	isHit3 = IsCollisionStage(yenTransform, stageTransform3);
-	isHit4 = IsCollisionStage(yenTransform, stageTransform4);
-	isHit5 = IsCollisionStage(yenTransform, stageTransform5);
+	WorldTransform yenWorld;
+	yenWorld.Initialize();
+	yenWorld.translation_ = yenPosition_;
+	yenWorld.rotation_ = { 0.0f,0.0f,0.0f };
+	yenWorld.scale_ = { 1.0f,1.0f,1.0f };
+	isHit =  hitBox_.IsCollisionStage(yenWorld, stageTransform);
+	isHit2 = hitBox_.IsCollisionStage(yenWorld, stageTransform2);
+	isHit3 = hitBox_.IsCollisionStage(yenWorld, stageTransform3);
+	isHit4 = hitBox_.IsCollisionStage(yenWorld, stageTransform4);
+	isHit5 = hitBox_.IsCollisionStage(yenWorld, stageTransform5);
 
-	hitGoal = IsCollisionGoal(yenTransform, goalTransform);
+	hitGoal_ = hitBox_.IsCollisionGoal(yenWorld, goalTransform);
 
 
 	if (isHit)
@@ -278,10 +286,10 @@ void GameScene::AllCollision()
 			std::sin(angle)
 		};
 
-		yenTransform.translation_.x -= dir.x * speed;
-		if (!hitWall)
+		yenPosition_.x -= dir.x * speed;
+		if (!hitWall_)
 		{
-			yenTransform.translation_.y -= dir.y * speed;
+			yenPosition_.y -= dir.y * speed;
 		}
 	}
 	else if (isHit2)
@@ -295,10 +303,10 @@ void GameScene::AllCollision()
 			std::sin(angle)
 		};
 
-		yenTransform.translation_.x -= dir.x * speed;
-		if (!hitWall)
+		yenPosition_.x -= dir.x * speed;
+		if (!hitWall_)
 		{
-			yenTransform.translation_.y -= dir.y * speed;
+			yenPosition_.y -= dir.y * speed;
 		}
 
 	}
@@ -313,10 +321,10 @@ void GameScene::AllCollision()
 			std::sin(angle)
 		};
 
-		yenTransform.translation_.x -= dir.x * speed;
-		if (!hitWall)
+		yenPosition_.x -= dir.x * speed;
+		if (!hitWall_)
 		{
-			yenTransform.translation_.y -= dir.y * speed;
+			yenPosition_.y -= dir.y * speed;
 		}
 
 	}
@@ -331,10 +339,10 @@ void GameScene::AllCollision()
 			std::sin(angle)
 		};
 
-		yenTransform.translation_.x -= dir.x * speed;
-		if (!hitWall)
+		yenPosition_.x -= dir.x * speed;
+		if (!hitWall_)
 		{
-			yenTransform.translation_.y -= dir.y * speed;
+			yenPosition_.y -= dir.y * speed;
 		}
 
 	}
@@ -349,28 +357,28 @@ void GameScene::AllCollision()
 			std::sin(angle)
 		};
 
-		yenTransform.translation_.x -= dir.x * speed;
-		if (!hitWall)
+		yenPosition_.x -= dir.x * speed;
+		if (!hitWall_)
 		{
-			yenTransform.translation_.y -= dir.y * speed;
+			yenPosition_.y -= dir.y * speed;
 		}
 
 	}
 
-	if (hitGoal)
+	if (hitGoal_)
 	{
-		isClear = true;
+		isClear_ = true;
 	}
 }
 
 void GameScene::Draw()
 {
-	stageModel_->Draw(stageTransform, camera);
-	stageModel_->Draw(stageTransform2, camera);
-	stageModel_->Draw(stageTransform3, camera);
-	stageModel_->Draw(stageTransform4, camera);
-	stageModel_->Draw(stageTransform5, camera);
-	yenModel_->Draw(yenTransform, camera);
-	goalModel_->Draw(goalTransform, camera);
-	haikeiModel_->Draw(haikeiTransform,camera);
+	stageModel_->Draw(stageTransform, camera_);
+	stageModel_->Draw(stageTransform2, camera_);
+	stageModel_->Draw(stageTransform3, camera_);
+	stageModel_->Draw(stageTransform4, camera_);
+	stageModel_->Draw(stageTransform5, camera_);
+	coin_.Draw();
+	goalModel_->Draw(goalTransform, camera_);
+	haikeiModel_->Draw(haikeiTransform,camera_);
 }
