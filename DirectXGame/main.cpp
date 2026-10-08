@@ -127,7 +127,7 @@ void DrawScene() {
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
-	KamataEngine::Initialize(L"3162_五戦錬磨");
+	KamataEngine::Initialize(L"LE3C_05_イセリ_シュンスケ_10円ゲーム");
 	// sorry
 	DirectXCommon* dxcommon = DirectXCommon::GetInstance();
 

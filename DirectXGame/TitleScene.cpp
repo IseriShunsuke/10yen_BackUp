@@ -13,6 +13,10 @@ TitleScene::~TitleScene()
 
 void TitleScene::Initialize()
 {
+	camera_.Initialize();
+	camera_.rotation_ = { 0.0f,0.0f,0.0f };
+	camera_.translation_ = { 0.0f, 0.0f,0.0f };
+
 	stageModel_ = Model::CreateFromOBJ("stage_kari");
 	stageTransform.Initialize();
 	stageTransform.translation_ = { -12.0f,5.0f,9.0f };
@@ -41,10 +45,9 @@ void TitleScene::Initialize()
 
 	//10円
 	yenModel_ = Model::CreateFromOBJ("coin");
-	yenTransform.Initialize();
-	yenTransform.translation_ = { -5.0f,16.0f,-10.0f };
-	yenTransform.scale_ = { 1.0f,1.0f,1.0f };
-	yenTransform.rotation_ = { 0.0f,0.0f,0.0f };
+	coin_.Initialize(yenModel_,&camera_, { -5.0f,16.0f,-10.0f });
+	yenRotation_ = { 0.0f,0.0f,0.0f };
+	yenPosition_ = { -5.0f,16.0f,-10.0f };
 
 	//背景
 	haikeiModel_ = Model::CreateFromOBJ("haikei");
@@ -53,9 +56,7 @@ void TitleScene::Initialize()
 	haikeiTransform.scale_ = { 0.6f,1.5f,1.0f };
 	haikeiTransform.rotation_ = { 0.0f,3.14f,0.0f };
 
-	camera.Initialize();
-	camera.rotation_ = { 0.0f,0.0f,0.0f };
-	camera.translation_ = { 0.0f, 0.0f,0.0f };
+	
 
 	cameraPosition = { -5.0f,0.0f,-25.0f };
 
@@ -93,6 +94,11 @@ void TitleScene::Update()
 		Audio::GetInstance()->StopWave(soundDataHandle);
 		
 	}
+
+	
+	coin_.SetPosition(yenPosition_);
+	coin_.SetRotation(yenRotation_);
+	coin_.Update();
 	
 	viewTimer += 1.0f / 60.0f;
 
@@ -109,34 +115,34 @@ void TitleScene::Update()
 	if (!isRolling)
 	{
 		waitTimer += 1.0f / 60.0f;
-		yenTransform.rotation_.y += 0.1f;
+		yenRotation_.y += 0.1f;
 	}
 	if (isRolling)
 	{
-		yenTransform.translation_.x += 0.1f;
-		yenTransform.rotation_.z -= 0.03f;
-		if (yenTransform.translation_.x >= 12.0f)
+		yenPosition_.x += 0.1f;
+		yenRotation_.z -= 0.03f;
+		if (yenPosition_.x >= 12.0f)
 		{
-			yenTransform.translation_.x = -21.0f;
+			yenPosition_.x = -21.0f;
 			roop++;
 		}
-		if (roop >= 2 && yenTransform.translation_.x >= -5.0f)
+		if (roop >= 2 && yenPosition_.x >= -5.0f)
 		{
 			isRolling = false;
 		}
 	}
 
-	if (waitTimer >= 20.0f)
+	if (waitTimer >= 10.0f)
 	{
 		waitTimer = 0.0f;
 		roop = 0;
-		yenTransform.rotation_.y = 0.0f;
+		yenRotation_.y = 0.0f;
 		isRolling = true;
 	}
 
 	cameraPosition.y -= cameraSpeed;
 
-	yenTransform.translation_.y = cameraPosition.y +4.5f;
+	yenPosition_.y = cameraPosition.y +4.5f;
 
 	if (cameraPosition.y <= -38.0f)
 	{
@@ -148,7 +154,7 @@ void TitleScene::Update()
 		cameraSpeed = -cameraSpeed;
 	}
 
-	camera.translation_ = cameraPosition;
+	camera_.translation_ = cameraPosition;
 
 	stageTransform.UpdateMatrix();
 	stageTransform2.UpdateMatrix();
@@ -156,28 +162,26 @@ void TitleScene::Update()
 	stageTransform4.UpdateMatrix();
 	stageTransform5.UpdateMatrix();
 
-	yenTransform.UpdateMatrix();
-
 	haikeiTransform.UpdateMatrix();
 
-	camera.UpdateMatrix();
+	camera_.UpdateMatrix();
 
-	camera.TransferMatrix();
+	camera_.TransferMatrix();
 
 
 }
 
 void TitleScene::Draw()
 {
-	stageModel_->Draw(stageTransform, camera);
-	stageModel_->Draw(stageTransform2, camera);
-	stageModel_->Draw(stageTransform3, camera);
-	stageModel_->Draw(stageTransform4, camera);
-	stageModel_->Draw(stageTransform5, camera);
+	stageModel_->Draw(stageTransform, camera_);
+	stageModel_->Draw(stageTransform2, camera_);
+	stageModel_->Draw(stageTransform3, camera_);
+	stageModel_->Draw(stageTransform4, camera_);
+	stageModel_->Draw(stageTransform5, camera_);
 
-	haikeiModel_->Draw(haikeiTransform, camera);
+	haikeiModel_->Draw(haikeiTransform, camera_);
 
-	yenModel_->Draw(yenTransform, camera);
+	coin_.Draw();
 
 	Sprite::PreDraw();
 	if (isView)

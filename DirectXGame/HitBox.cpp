@@ -2,7 +2,7 @@
 #include <cmath>
 
 using namespace KamataEngine;
-bool IsCollisionStage(WorldTransform& coin, WorldTransform& stage)
+bool HitBox::IsCollisionStage(WorldTransform& coin, WorldTransform& stage)
 {
 	float angle = -stage.rotation_.z;   // 逆回転
 
@@ -24,7 +24,7 @@ bool IsCollisionStage(WorldTransform& coin, WorldTransform& stage)
 	return false;
 }
 
-bool IsCollisionGoal(const WorldTransform& coin, const WorldTransform& goal)
+bool HitBox::IsCollisionGoal(const WorldTransform& coin, const WorldTransform& goal)
 {
 	float angle = -goal.rotation_.z;   // 逆回転
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "KamataEngine.h"
+#include "Coin.h"
 
 class TitleScene
 {
@@ -24,26 +25,29 @@ private:
 	KamataEngine::Model* stageModel_;
 
 	//10円
-	KamataEngine::WorldTransform yenTransform;
+	Coin coin_;
 	KamataEngine::Model* yenModel_;
+	KamataEngine::Vector3 yenRotation_;
+	KamataEngine::Vector3 yenPosition_;
 
 	//背景
 	KamataEngine::WorldTransform haikeiTransform;
 	KamataEngine::Model* haikeiModel_;
 
-	KamataEngine::Camera camera;
+	KamataEngine::Camera camera_;
 	
 	KamataEngine::Vector3 cameraPosition;
+	float cameraSpeed;
 
 	KamataEngine::Sprite* spriteUI_ = nullptr;
 
 	uint32_t UItexture_;
-
+	 
 	KamataEngine::Sprite* spriteTitleNameUI_ = nullptr;
 
 	uint32_t nameUItexture_;
 
-	float cameraSpeed;
+	
 
 	bool isFinish;
 
